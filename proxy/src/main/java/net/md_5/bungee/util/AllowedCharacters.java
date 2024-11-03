@@ -4,30 +4,42 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class AllowedCharacters {
+public final class AllowedCharacters
+{
 
-    public static boolean isChatAllowedCharacter(char character) {
+    public static boolean isChatAllowedCharacter(char character)
+    {
         // Section symbols, control sequences, and deletes are not allowed
         return character != '\u00A7' && character >= ' ' && character != 127;
     }
 
-    private static boolean isNameAllowedCharacter(char c, boolean onlineMode) {
-        if (onlineMode) {
-            // 在 onlineMode 为真时，允许英文字母、数字、下划线以及中文字符
-            return ((c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '\u4e00' && c <= '\u9fa5'));
-        } else {
+    private static boolean isNameAllowedCharacter(char c, boolean onlineMode)
+    {
+        if ( onlineMode )
+        {
+            return c >= 'a' && c <= 'z'
+                || c >= '0' && c <= '9'
+                || c >= 'A' && c <= 'Z'
+                || c >= '一' && c <= '龥' // 支持中文字符
+                || c == '_';
+        } else
+        {
             // Don't allow spaces, Yaml config doesn't support them
-            return isChatAllowedCharacter(c) && c != ' ';
+            return isChatAllowedCharacter( c ) && c != ' ';
         }
     }
 
-    public static boolean isValidName(String name, boolean onlineMode) {
-        if (name.isEmpty() || name.length() > 16) {
+    public static boolean isValidName(String name, boolean onlineMode)
+    {
+        if ( name.isEmpty() || name.length() > 16 )
+        {
             return false;
         }
 
-        for (int index = 0, len = name.length(); index < len; index++) {
-            if (!isNameAllowedCharacter(name.charAt(index), onlineMode)) {
+        for ( int index = 0, len = name.length(); index < len; index++ )
+        {
+            if ( !isNameAllowedCharacter( name.charAt( index ), onlineMode ) )
+            {
                 return false;
             }
         }
